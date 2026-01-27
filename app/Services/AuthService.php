@@ -20,7 +20,11 @@ class AuthService
             throw new \Exception('Account is inactive');
         }
 
-        $token = $user->createToken('api-token')->accessToken;
+        // ✅ LOAD ROLE RELATION
+        $user->load('userType');
+
+        // ✅ SANCTUM TOKEN (CORRECT)
+        $token = $user->createToken('api-token')->plainTextToken;
 
         return [
             'token' => $token,
