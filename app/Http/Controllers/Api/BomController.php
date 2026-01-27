@@ -13,6 +13,7 @@ class BomController extends Controller
     /**
      * GET: List all BOMs (UI-ready format)
      */
+<<<<<<< HEAD
    public function index()
 {
     try {
@@ -25,6 +26,12 @@ class BomController extends Controller
                 ->header('X-STATUS-MSG', config('messages.data_not_found'));
         }
 
+=======
+    public function index()
+    {
+        $boms = Bom::with(['product', 'items.component'])->get();
+
+>>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
         $response = $boms->map(function ($bom) {
             $estimatedCost = 0;
 
@@ -52,6 +59,7 @@ class BomController extends Controller
             ];
         });
 
+<<<<<<< HEAD
         return response()->json([
             'data' => $response,
         ], 200)
@@ -82,6 +90,27 @@ class BomController extends Controller
 
     try {
         DB::transaction(function () use ($request) {
+=======
+        return response()->json($response);
+    }
+
+    /**
+     * POST: Create BOM
+     * One BOM per product (old BOM replaced)
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'product_id'                 => 'required|exists:products,id',
+            'components'                 => 'required|array|min:1',
+            'components.*.component_id'  => 'required|exists:components,id',
+            'components.*.quantity'      => 'required|integer|min:1',
+        ]);
+
+        DB::transaction(function () use ($request) {
+
+            // Ensure only ONE BOM per product
+>>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
             Bom::where('product_id', $request->product_id)->delete();
 
             $bom = Bom::create([
@@ -97,6 +126,7 @@ class BomController extends Controller
             }
         });
 
+<<<<<<< HEAD
         return response()->json([], 201)
             ->header('X-STATUS-CODE', 201)
             ->header('X-STATUS', 'ok')
@@ -127,6 +157,32 @@ class BomController extends Controller
             $bom = Bom::findOrFail($id);
             $bom->items()->delete();
 
+=======
+        return response()->json([
+            'message' => 'BOM created successfully',
+        ], 201);
+    }
+
+    /**
+     * PUT: Update BOM (edit components & quantities)
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'components'                 => 'required|array|min:1',
+            'components.*.component_id'  => 'required|exists:components,id',
+            'components.*.quantity'      => 'required|integer|min:1',
+        ]);
+
+        DB::transaction(function () use ($request, $id) {
+
+            $bom = Bom::findOrFail($id);
+
+            // Remove old items
+            $bom->items()->delete();
+
+            // Insert updated items
+>>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
             foreach ($request->components as $item) {
                 BomItem::create([
                     'bom_id'       => $bom->id,
@@ -136,6 +192,7 @@ class BomController extends Controller
             }
         });
 
+<<<<<<< HEAD
         return response()->json([], 200)
             ->header('X-STATUS-CODE', 200)
             ->header('X-STATUS', 'ok')
@@ -149,10 +206,17 @@ class BomController extends Controller
     }
 }
 
+=======
+        return response()->json([
+            'message' => 'BOM updated successfully',
+        ]);
+    }
+>>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
 
     /**
      * DELETE: Remove BOM
      */
+<<<<<<< HEAD
   public function destroy($id)
 {
     try {
@@ -174,3 +238,20 @@ class BomController extends Controller
 }
 
 }
+=======
+    public function destroy($id)
+    {
+        $bom = Bom::findOrFail($id);
+
+        // Delete child items first
+        $bom->items()->delete();
+
+        // Delete BOM
+        $bom->delete();
+
+        return response()->json([
+            'message' => 'BOM deleted successfully',
+        ]);
+    }
+}
+>>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba

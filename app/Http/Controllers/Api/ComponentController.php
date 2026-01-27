@@ -11,6 +11,7 @@ class ComponentController extends Controller
 {
     public function __construct(private ComponentService $service) {}
 
+<<<<<<< HEAD
     /* ===============================
      | GET: COMPONENT LIST
      =============================== */
@@ -36,11 +37,21 @@ class ComponentController extends Controller
     /* ===============================
      | POST: CREATE COMPONENT
      =============================== */
+=======
+    public function index()
+    {
+        return response()->json([
+            'data' => $this->service->list()
+        ]);
+    }
+
+>>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
     public function store(Request $request)
     {
         $component = $this->service->store($request->all());
 
         return response()->json([
+<<<<<<< HEAD
             'data' => $component,
         ], 201)
         ->header('X-STATUS-CODE', 201)
@@ -66,13 +77,36 @@ class ComponentController extends Controller
     /* ===============================
      | DELETE: REMOVE COMPONENT
      =============================== */
+=======
+            'message' => 'Component created successfully',
+            'data' => $component
+        ]);
+    }
+
+    public function update(Request $request, Component $component)
+    {
+        $component = $this->service->update($component, $request->all());
+
+        return response()->json([
+            'message' => 'Component updated successfully',
+            'data' => $component
+        ]);
+    }
+
+>>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
     public function destroy(Component $component)
     {
         $this->service->delete($component);
 
+<<<<<<< HEAD
         return response()->json([], 200)
             ->header('X-STATUS-CODE', 200)
             ->header('X-STATUS', 'ok')
             ->header('X-STATUS-MSG', config('messages.component_deleted'));
+=======
+        return response()->json([
+            'message' => 'Component deleted successfully'
+        ]);
+>>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
     }
 }
