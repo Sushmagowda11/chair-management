@@ -4,22 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
-<<<<<<< HEAD
 use App\Http\Requests\UpdateProductRequest;
-use App\Services\ProductService;
 use App\Models\Product;
-=======
 use App\Services\ProductService;
-use App\Models\Product;
-use App\Http\Requests\UpdateProductRequest;
-
->>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
 
 class ProductController extends Controller
 {
     public function __construct(private ProductService $productService) {}
 
-<<<<<<< HEAD
     /* ===============================
      | GET: PRODUCT LIST
      =============================== */
@@ -45,21 +37,11 @@ class ProductController extends Controller
     /* ===============================
      | POST: CREATE PRODUCT
      =============================== */
-=======
-    public function index()
-    {
-        return response()->json([
-            'data' => Product::latest()->get()
-        ]);
-    }
-
->>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
     public function store(StoreProductRequest $request)
     {
         $product = $this->productService->store($request->validated());
 
         return response()->json([
-<<<<<<< HEAD
             'data' => $product,
         ], 201)
         ->header('X-STATUS-CODE', 201)
@@ -98,34 +80,4 @@ class ProductController extends Controller
             ->header('X-STATUS', 'ok')
             ->header('X-STATUS-MSG', config('messages.product_deleted'));
     }
-=======
-            'message' => 'Product created successfully',
-            'data' => $product
-        ], 201);
-    }
-
-public function update(UpdateProductRequest $request, $id)
-{
-    $product = Product::findOrFail($id);
-
-    $updated = $this->productService->update($product, $request->validated());
-
-    return response()->json([
-        'message' => 'Product updated successfully',
-        'data' => $updated
-    ]);
-}
-
-public function destroy($id)
-{
-    $product = Product::findOrFail($id);
-
-    $this->productService->delete($product);
-
-    return response()->json([
-        'message' => 'Product deleted successfully'
-    ]);
-}
-
->>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
 }
