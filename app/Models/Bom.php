@@ -17,4 +17,9 @@ class Bom extends Model
     {
         return $this->hasMany(BomItem::class);
     }
+     public function bomItems()
+    {
+        return $this->hasMany(BomItem::class);
+    }
 }
+
