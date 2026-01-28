@@ -12,11 +12,13 @@ return[
 
 
     // PRODUCTS
-'product_list_fetched' => 'product_list_fetched',
-'product_created'      => 'product_created',
-'product_updated'      => 'product_updated',
-'product_deleted'      => 'product_deleted',
-
+      'product_created'        => 'Product created successfully',
+    'product_updated'        => 'Product updated successfully',
+    'product_deleted'        => 'Product deleted successfully',
+    'product_list_fetched'   => 'Product list fetched successfully',
+    'product_fetched'        => 'Product fetched successfully',
+    'data_not_found'         => 'No data found',
+    
     // COMPONENTS
 'component_list_fetched' => 'component_list_fetched',
 'component_created'      => 'component_created',
