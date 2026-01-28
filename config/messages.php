@@ -12,17 +12,19 @@ return[
 
 
     // PRODUCTS
-'product_list_fetched' => 'product_list_fetched',
-'product_created'      => 'product_created',
-'product_updated'      => 'product_updated',
-'product_deleted'      => 'product_deleted',
+      'product_created'        => 'Product created successfully',
+    'product_updated'        => 'Product updated successfully',
+    'product_deleted'        => 'Product deleted successfully',
+    'product_list_fetched'   => 'Product list fetched successfully',
+    'product_fetched'        => 'Product fetched successfully',
+    'data_not_found'         => 'No data found',
 
-    // COMPONENTS
-'component_list_fetched' => 'component_list_fetched',
-'component_created'      => 'component_created',
-'component_updated'      => 'component_updated',
-'component_deleted'      => 'component_deleted',
-
+    // COMPONENTS 
+    'component_created' => 'Component created successfully',
+    'component_updated' => 'Component updated successfully',
+    'component_deleted' => 'Component deleted successfully',
+    'component_list_fetched' => 'Component list fetched successfully',
+    'data_not_found' => 'No data found',
 
     // INVENTORY
 'inventory_current_stock_loaded' => 'inventory_current_stock_loaded',

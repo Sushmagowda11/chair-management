@@ -4,128 +4,129 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProductRequest;
-<<<<<<< HEAD
 use App\Http\Requests\UpdateProductRequest;
-use App\Services\ProductService;
 use App\Models\Product;
-=======
 use App\Services\ProductService;
-use App\Models\Product;
-use App\Http\Requests\UpdateProductRequest;
-
->>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
     public function __construct(private ProductService $productService) {}
 
-<<<<<<< HEAD
     /* ===============================
      | GET: PRODUCT LIST
+     | Success → data only
      =============================== */
     public function index()
     {
         $products = Product::latest()->get();
 
-        if ($products->isEmpty()) {
-            return response()->json([], 404)
-                ->header('X-STATUS-CODE', 404)
-                ->header('X-STATUS', 'fail')
-                ->header('X-STATUS-MSG', config('messages.data_not_found'));
+        return response()->json([
+            'data' => $products,
+        ], 200);
+    }
+
+    /* ===============================
+     | GET: PRODUCT BY ID
+     | Success → data only
+     | Fail → message + code
+     =============================== */
+    public function show($id)
+    {
+        $product = Product::find($id);
+
+        if (! $product) {
+            return response()->json([
+                'message' => config('messages.data_not_found'),
+                'code'    => 404
+            ], 404);
         }
 
         return response()->json([
-            'data' => $products,
-        ], 200)
-        ->header('X-STATUS-CODE', 200)
-        ->header('X-STATUS', 'ok')
-        ->header('X-STATUS-MSG', config('messages.product_list_fetched'));
+            'data' => $product
+        ], 200);
     }
 
     /* ===============================
      | POST: CREATE PRODUCT
+     | Frontend → message + code
+     | Postman → full data
      =============================== */
-=======
-    public function index()
-    {
-        return response()->json([
-            'data' => Product::latest()->get()
-        ]);
-    }
-
->>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
     public function store(StoreProductRequest $request)
     {
         $product = $this->productService->store($request->validated());
 
+        // Frontend
+        if ($request->boolean('ui')) {
+            return response()->json([
+                'message' => config('messages.product_created'),
+                'code'    => 201
+            ], 201);
+        }
+
+        // Postman / backend testing
         return response()->json([
-<<<<<<< HEAD
-            'data' => $product,
-        ], 201)
-        ->header('X-STATUS-CODE', 201)
-        ->header('X-STATUS', 'ok')
-        ->header('X-STATUS-MSG', config('messages.product_created'));
-    }
-
-    /* ===============================
-     | PUT: UPDATE PRODUCT
-     =============================== */
-    public function update(UpdateProductRequest $request, $id)
-    {
-        $product = Product::findOrFail($id);
-
-        $updated = $this->productService->update($product, $request->validated());
-
-        return response()->json([
-            'data' => $updated,
-        ], 200)
-        ->header('X-STATUS-CODE', 200)
-        ->header('X-STATUS', 'ok')
-        ->header('X-STATUS-MSG', config('messages.product_updated'));
-    }
-
-    /* ===============================
-     | DELETE: REMOVE PRODUCT
-     =============================== */
-    public function destroy($id)
-    {
-        $product = Product::findOrFail($id);
-
-        $this->productService->delete($product);
-
-        return response()->json([], 200)
-            ->header('X-STATUS-CODE', 200)
-            ->header('X-STATUS', 'ok')
-            ->header('X-STATUS-MSG', config('messages.product_deleted'));
-    }
-=======
-            'message' => 'Product created successfully',
             'data' => $product
         ], 201);
     }
 
-public function update(UpdateProductRequest $request, $id)
-{
-    $product = Product::findOrFail($id);
+    /* ===============================
+     | PUT: UPDATE PRODUCT
+     | Frontend → message + code
+     | Postman → full data
+     | Invalid ID → message + code
+     =============================== */
+    public function update(UpdateProductRequest $request, $id)
+    {
+        $product = Product::find($id);
 
-    $updated = $this->productService->update($product, $request->validated());
+        if (! $product) {
+            return response()->json([
+                'message' => config('messages.data_not_found'),
+                'code'    => 404
+            ], 404);
+        }
 
-    return response()->json([
-        'message' => 'Product updated successfully',
-        'data' => $updated
-    ]);
-}
+        $updated = $this->productService->update(
+            $product,
+            $request->validated()
+        );
 
-public function destroy($id)
-{
-    $product = Product::findOrFail($id);
+        // Frontend
+        if ($request->boolean('ui')) {
+            return response()->json([
+                'message' => config('messages.product_updated'),
+                'code'    => 200
+            ], 200);
+        }
 
-    $this->productService->delete($product);
+        // Postman
+        return response()->json([
+            'data' => $updated
+        ], 200);
+    }
 
-    return response()->json([
-        'message' => 'Product deleted successfully'
-    ]);
-}
+    /* ===============================
+     | DELETE: REMOVE PRODUCT
+     | Success → message + code
+     | Fail → message + code
+     =============================== */
+    public function destroy($id)
+    {
+        $product = Product::find($id);
 
->>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
+        if (! $product) {
+            return response()->json([
+                'message' => config('messages.data_not_found'),
+                'code'    => 404
+            ], 404);
+        }
+
+        $this->productService->delete($product);
+
+        return response()->json([
+            'message' => config('messages.product_deleted'),
+            'code'    => 200
+        ], 200);
+    }
 }

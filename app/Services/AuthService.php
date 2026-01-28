@@ -2,12 +2,14 @@
 
 namespace App\Services;
 
+use App\Models\Version;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class AuthService
 {
-    public function login(array $data)
+    public function login(array $data): array
     {
         $user = User::where('email', $data['email'])->first();
 
@@ -15,20 +17,23 @@ class AuthService
             throw new \Exception('Invalid credentials');
         }
 
-        // ✅ STATUS CHECK (BLOCK INACTIVE USERS)
         if ($user->status != 1) {
             throw new \Exception('Account is inactive');
         }
 
-        // ✅ LOAD ROLE RELATION
-        $user->load('userType');
+        $version = Version::select('version_panel')->first();
 
-        // ✅ SANCTUM TOKEN (CORRECT)
         $token = $user->createToken('api-token')->plainTextToken;
 
+        $expiresAt = config('sanctum.expiration')
+            ? Carbon::now()->addMinutes(config('sanctum.expiration'))
+            : null;
+
         return [
-            'token' => $token,
-            'user'  => $user,
+            'token'      => $token,
+            'user'       => $user,
+            'version'    => $version,
+            'expires_at' => $expiresAt?->toDateTimeString(),
         ];
     }
 }
