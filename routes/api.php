@@ -41,8 +41,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // 🧩 Components
-    Route::apiResource('components', ComponentController::class)
-        ->only(['index', 'store', 'update', 'destroy']);
+   Route::apiResource('components', ComponentController::class)
+    ->only(['index', 'show', 'store', 'update', 'destroy']);
+
 
     // 🧾 BOM
     Route::apiResource('boms', BomController::class)

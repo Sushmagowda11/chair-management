@@ -11,102 +11,95 @@ class ComponentController extends Controller
 {
     public function __construct(private ComponentService $service) {}
 
-<<<<<<< HEAD
-    /* ===============================
-     | GET: COMPONENT LIST
-     =============================== */
+   
     public function index()
     {
         $components = $this->service->list();
 
-        if ($components->isEmpty()) {
-            return response()->json([], 404)
-                ->header('X-STATUS-CODE', 404)
-                ->header('X-STATUS', 'fail')
-                ->header('X-STATUS-MSG', config('messages.data_not_found'));
+        return response()->json([
+            'data' => $components
+        ], 200);
+    }
+
+   
+    public function show($id)
+    {
+        $component = Component::find($id);
+
+        if (! $component) {
+            return response()->json([
+                'message' => config('messages.data_not_found'),
+                'code'    => 404
+            ], 404);
         }
 
         return response()->json([
-            'data' => $components,
-        ], 200)
-        ->header('X-STATUS-CODE', 200)
-        ->header('X-STATUS', 'ok')
-        ->header('X-STATUS-MSG', config('messages.component_list_fetched'));
+            'data' => $component
+        ], 200);
     }
 
-    /* ===============================
-     | POST: CREATE COMPONENT
-     =============================== */
-=======
-    public function index()
-    {
-        return response()->json([
-            'data' => $this->service->list()
-        ]);
-    }
-
->>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
+   
     public function store(Request $request)
     {
         $component = $this->service->store($request->all());
 
+        // Frontend
+        if ($request->boolean('ui')) {
+            return response()->json([
+                'message' => config('messages.component_created'),
+                'code'    => 201
+            ], 201);
+        }
+
+        // Postman
         return response()->json([
-<<<<<<< HEAD
-            'data' => $component,
-        ], 201)
-        ->header('X-STATUS-CODE', 201)
-        ->header('X-STATUS', 'ok')
-        ->header('X-STATUS-MSG', config('messages.component_created'));
+            'data' => $component
+        ], 201);
     }
 
-    /* ===============================
-     | PUT: UPDATE COMPONENT
-     =============================== */
-    public function update(Request $request, Component $component)
+       public function update(Request $request, $id)
     {
+        $component = Component::find($id);
+
+        if (! $component) {
+            return response()->json([
+                'message' => config('messages.data_not_found'),
+                'code'    => 404
+            ], 404);
+        }
+
         $updated = $this->service->update($component, $request->all());
 
+        // Frontend
+        if ($request->boolean('ui')) {
+            return response()->json([
+                'message' => config('messages.component_updated'),
+                'code'    => 200
+            ], 200);
+        }
+
+        // Postman
         return response()->json([
-            'data' => $updated,
-        ], 200)
-        ->header('X-STATUS-CODE', 200)
-        ->header('X-STATUS', 'ok')
-        ->header('X-STATUS-MSG', config('messages.component_updated'));
+            'data' => $updated
+        ], 200);
     }
 
-    /* ===============================
-     | DELETE: REMOVE COMPONENT
-     =============================== */
-=======
-            'message' => 'Component created successfully',
-            'data' => $component
-        ]);
-    }
-
-    public function update(Request $request, Component $component)
+        public function destroy($id)
     {
-        $component = $this->service->update($component, $request->all());
+        $component = Component::find($id);
 
-        return response()->json([
-            'message' => 'Component updated successfully',
-            'data' => $component
-        ]);
-    }
+        if (! $component) {
+            return response()->json([
+                'message' => config('messages.data_not_found'),
+                'code'    => 404
+            ], 404);
+        }
 
->>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
-    public function destroy(Component $component)
-    {
         $this->service->delete($component);
 
-<<<<<<< HEAD
-        return response()->json([], 200)
-            ->header('X-STATUS-CODE', 200)
-            ->header('X-STATUS', 'ok')
-            ->header('X-STATUS-MSG', config('messages.component_deleted'));
-=======
         return response()->json([
-            'message' => 'Component deleted successfully'
-        ]);
->>>>>>> 12d698d386402a5adf1bdb0eee155e55a1882bba
+            'message' => config('messages.component_deleted'),
+            'code'    => 200
+        ], 200);
     }
 }
